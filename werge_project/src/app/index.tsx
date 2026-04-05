@@ -1,14 +1,18 @@
 import * as Device from 'expo-device';
+import { useRef } from 'react';
 import { Platform, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
 import { Keyboard } from '@/components/keyboard';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { WebBadge } from '@/components/web-badge';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { useState, useEffect } from 'react';
+import { GridDataInterface } from '@/types/grid-data-interface';
+import { handleGameStartMock, handleGameStartAsync } from '@/hooks/game-start-functions';
+import { TileGrid, TileGridHandle } from '@/components/tile-grid';
+import { useLayoutConfigs } from '@/hooks/use-layout-configs';
 
 function getDevMenuHint() {
   if (Platform.OS === 'web') {
@@ -30,6 +34,42 @@ function getDevMenuHint() {
 }
 
 export default function HomeScreen() {
+  // Data used to render the TileGrid component
+  const [gridState, setGridState] = useState<GridDataInterface | undefined>(undefined);
+  // Data used to fill the focused row in TileGrid
+  const [inputState, setInputState] = useState<string[] | undefined>(undefined);
+  // Number used to track which index in inputState is currently being focused on
+  const [inputIndex, setInputIndex] = useState<number>(0);
+
+  // TileGrid referance for animations
+  const tileGridRef = useRef<TileGridHandle|null>(null);
+
+  const { tileGridLayoutConfig } = useLayoutConfigs()
+
+  // Simple flag to determine if data should be fetched or if mock data should be used instead
+  const testing = true;
+
+  useEffect(() => {
+    if (testing) {
+      const { descriptionData, gridData, inputData } = handleGameStartMock();
+      setGridState(gridData);
+      setInputState(inputData);
+    } else {
+      const init = async () => {
+         // const [descriptionData, gridData, inputData] = handleGameStartMock();
+      };
+      init();
+    }
+  }, []);
+
+  function onKeyPress() {
+    if (!tileGridRef.current) {
+      return
+    }
+
+    tileGridRef.current.testAnimation()
+  }
+
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
@@ -37,19 +77,12 @@ export default function HomeScreen() {
           Get started
         </ThemedText>
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
+        <TileGrid ref={tileGridRef}
+          gridState={gridState}
+          inputState={inputState}
+          layoutConfig={tileGridLayoutConfig}/>
 
-        <Keyboard onKeyPress={() => {}}></Keyboard>
+        <Keyboard onKeyPress={onKeyPress} />
 
         {Platform.OS === 'web' && <WebBadge />}
       </SafeAreaView>

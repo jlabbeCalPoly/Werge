@@ -4,6 +4,7 @@
  */
 
 import '@/global.css';
+import { GridTileColorInterface } from '@/types/grid-tile-color-interface';
 
 import { Platform } from 'react-native';
 
@@ -21,8 +22,23 @@ export const Colors = {
     backgroundElement: '#212225',
     backgroundSelected: '#2E3135',
     textSecondary: '#B0B4BA',
-  },
+  }
 } as const;
+
+export const GridTileColors: Record<string, GridTileColorInterface> = {
+  gray: {
+    opaque: "#c4c4c4",
+    transparent: "#c4c4c420"
+  },
+  gold: {
+    opaque: "#ffbb00",
+    transparent: "#ffbb0020"
+  },
+  red: {
+    opaque: "#ff0000",
+    transparent: "#ff000020"
+  }
+}
 
 export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;
 
