@@ -1,6 +1,6 @@
 import { AspectRatios, GapRatios, MaxHeightRatios, MaxItems } from "@/constants/layout";
 import { Spacing } from "@/constants/theme";
-import { TileGridConfigInterface } from "@/types/tile-grid-config-interface";
+import { TileGridConfig } from "@/types/interfaces/tile-grid-config";
 import { Dimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -47,13 +47,13 @@ function createTileGridLayoutConfig(width: number, height: number) {
     const { tileSize, tileContentSize } = calculateTileSize(tileGridWidth, gap)
     const { tileRowHeight, tileGridHeight } = calculateTileGridHeights(tileSize, gap)
 
-    const tileGridLayoutConfig: TileGridConfigInterface = {
+    const tileGridLayoutConfig: TileGridConfig = {
         width: tileGridWidth,
         height: tileGridHeight,
         gap: gap,
-        tileRowHeight: tileRowHeight,
+        rowHeight: tileRowHeight,
         tileSize: tileSize,
-        tileContentSize: tileContentSize
+        fontSize: tileContentSize
     }
 
     return tileGridLayoutConfig

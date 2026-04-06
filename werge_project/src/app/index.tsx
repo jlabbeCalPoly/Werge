@@ -12,6 +12,7 @@ import { useState, useEffect } from 'react';
 import { GridDataInterface } from '@/types/grid-data-interface';
 import { handleGameStartMock, handleGameStartAsync } from '@/hooks/game-start-functions';
 import { TileGrid, TileGridHandle } from '@/components/tile-grid';
+import { handleKeyPress, onKeyPressInterface } from '@/hooks/key-handler-functions';
 import { useLayoutConfigs } from '@/hooks/use-layout-configs';
 
 function getDevMenuHint() {
@@ -41,6 +42,8 @@ export default function HomeScreen() {
   // Number used to track which index in inputState is currently being focused on
   const [inputIndex, setInputIndex] = useState<number>(0);
 
+  const [hasInitiallyAnimated, setHasInitiallyAnimated] = useState<boolean>(false);
+
   // TileGrid referance for animations
   const tileGridRef = useRef<TileGridHandle|null>(null);
 
@@ -49,6 +52,7 @@ export default function HomeScreen() {
   // Simple flag to determine if data should be fetched or if mock data should be used instead
   const testing = true;
 
+  // Runs once on mount
   useEffect(() => {
     if (testing) {
       const { descriptionData, gridData, inputData } = handleGameStartMock();
@@ -60,14 +64,50 @@ export default function HomeScreen() {
       };
       init();
     }
+
+    if (tileGridRef.current != null) {
+      tileGridRef.current.enlargeTileAnimation(inputIndex);
+    }
   }, []);
 
-  function onKeyPress() {
-    if (!tileGridRef.current) {
+  useEffect(() => {
+    // Unmounted
+    if (tileGridRef == null) {
+      console.log("unmounted");
+      setHasInitiallyAnimated(false);
+    } else {
+      if (tileGridRef.current && !hasInitiallyAnimated) {
+        // Check to make sure that the initial animation was successful or not (refs may not be ready yet)
+        const hasAnimated = tileGridRef.current.enlargeTileAnimation(inputIndex);
+        setHasInitiallyAnimated(hasAnimated);
+      }
+    }
+  }, [tileGridRef.current])
+
+  function onKeyPress(key: string, override: string | undefined) {
+    if (!gridState || !inputState || !tileGridRef.current) {
       return
     }
 
-    tileGridRef.current.testAnimation()
+    const keyPressResults: onKeyPressInterface = handleKeyPress(
+      inputState,
+      inputIndex,
+      gridState.wordLength,
+      key,
+      override
+    )
+
+    // Set states
+    setInputState(keyPressResults.inputState);
+    setInputIndex(keyPressResults.inputIndex);
+
+    // Determine if any enlarge/shrink animations need to take place
+    if (keyPressResults.enlargeIndex != null) {
+      tileGridRef.current.enlargeTileAnimation(keyPressResults.enlargeIndex);
+    }
+    if (keyPressResults.shrinkIndex != null) {
+      tileGridRef.current.shrinkTileAnimation(keyPressResults.shrinkIndex);
+    }
   }
 
   return (

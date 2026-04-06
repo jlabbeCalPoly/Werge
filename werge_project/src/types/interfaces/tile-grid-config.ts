@@ -4,15 +4,15 @@
  * @param width The total width of the TileGrid component.
  * @param height The total height of the TileGrid component.
  * @param gap The spacing between tiles within the grid.
- * @param tileRowHeight The height of each row in the grid.
+ * @param rowHeight The height of each row in the grid.
  * @param tileSize The size (width and height) of each individual tile.
- * @param tileContentSize The size of the text inside each tile.
+ * @param fontSize The size of the text inside each tile.
  */
-export interface TileGridConfigInterface {
+export interface TileGridConfig {
     width: number,
     height: number,
     gap: number,
-    tileRowHeight: number,
+    rowHeight: number,
     tileSize: number,
-    tileContentSize: number
+    fontSize: number
 }

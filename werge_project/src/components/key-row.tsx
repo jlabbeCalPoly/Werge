@@ -6,7 +6,7 @@ import { KeyInterface } from "@/types/key-interface"
 import { Key } from "@/components/key";
 
 type KeyRowProps = {
-    onKeyPress: (value: string, override: undefined | string) => void,
+    onKeyPress: (value: string, override: string | undefined) => void,
     keyRow: KeyInterface[],
     gap: number,
     contentSize: number,

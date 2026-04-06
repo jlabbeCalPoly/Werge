@@ -10,7 +10,7 @@ import { StyledText } from './styled-text';
 // Types
 type IoniconsName = ComponentProps<typeof Ionicons>['name'];
 type KeyProps = {
-    onKeyPress: (value: string, override: undefined | string) => void,
+    onKeyPress: (value: string, override: string | undefined) => void,
     keyInterface: KeyInterface,
     contentSize: number,
     minWidth: number,

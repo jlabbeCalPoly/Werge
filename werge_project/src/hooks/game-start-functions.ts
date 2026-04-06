@@ -1,15 +1,9 @@
 import { GAME_INFORMATION_MOCK_DATA, GameDataInterface } from "@/types/game-data-interface"
 
-function createInputData(wordLength: number) {
-    const inputData: string[] = [];
-    inputData.fill("", 0, wordLength-1);
-    return inputData;
-}
-
 // Format the game data
 function formatGameData(data: GameDataInterface) {
     const wordLength = data.gridData.wordLength;
-    return {descriptionData: data.descriptionData, gridData: data.gridData, inputData: createInputData(wordLength)}
+    return {descriptionData: data.descriptionData, gridData: data.gridData, inputData: Array(wordLength).fill("")}
 }
 
 export function handleGameStartMock() {
